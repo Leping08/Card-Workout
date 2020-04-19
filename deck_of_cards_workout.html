@@ -1,0 +1,154 @@
+<!doctype html>
+<html>
+<head>
+    <title>Card Workout</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />  
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.materialdesignicons.com/5.1.45/css/materialdesignicons.min.css">
+
+</head>
+
+<body class="bg-gray-200">
+    <div id="root" class="container mx-auto">
+        <div class="flex text-center items-center p-4">
+            <div class="w-1/3">
+                <img alt="" class="h-32 mx-auto" src="img/undraw_personal_trainer_ote3.svg">
+            </div>
+            <div class="w-1/3 text-5xl text-gray-700">Deck Workout</div>
+            <div class="w-1/3">
+                <img alt="" class="h-32 mx-auto" src="img/undraw_working_out_6psf.svg">
+            </div>
+        </div>
+        <div class="flex p-4 mt-4 items-center text-center">
+            <div class="w-1/4">
+                <label for="S" class="text-gray-600"><span class="mdi mdi-cards-spade text-2xl"></span></label>
+                <input type="text" id="S" class="border shadow bg-gray-100 rounded p-1 text-gray-700 outline-none" v-model="workout.S">
+            </div>
+            <div class="w-1/4">
+                <label for="S" class="text-gray-600"><span class="mdi mdi-cards-heart text-2xl"></span></label>
+                <input type="text" id="S" class="border shadow bg-gray-100 rounded p-1 text-gray-700 outline-none" v-model="workout.H">
+            </div>
+            <div class="w-1/4">
+                <label for="S" class="text-gray-600"><span class="mdi mdi-cards-club text-2xl"></span></label>
+                <input type="text" id="S" class="border shadow bg-gray-100 rounded p-1 text-gray-700 outline-none" v-model="workout.C">
+            </div>
+            <div class="w-1/4">
+                <label for="S" class="text-gray-600"><span class="mdi mdi-cards-diamond text-2xl"></span></label>
+                <input type="text" id="S" class="border shadow bg-gray-100 rounded p-1 text-gray-700 outline-none" v-model="workout.D">
+            </div>
+        </div>
+        <div class="flex p-4">
+            <div class="flex mx-auto text-gray-700">
+                <div class="p-4">
+                    <input type="radio" name="mode" value="easy" id="easy" v-model="mode">
+                    <label for="easy">Easy</label>
+                </div>
+                <div class="p-4">
+                    <input type="radio" name="mode" value="medium" id="medium" v-model="mode">
+                    <label for="medium">Medium</label>
+                </div>
+                <div class="p-4">
+                    <input type="radio" name="mode" value="hard" id="hard" v-model="mode">
+                    <label for="hard">Hard</label>
+                </div>
+                <div class="p-4">
+                    <input type="radio" name="mode" value="insane" id="insane" v-model="mode">
+                    <label for="insane">Insane</label>
+                </div>
+            </div>
+        </div>
+        <div class="flex">
+            <div class="mx-auto p-4">
+                <button class="bg-blue-500 rounded-lg p-3 text-gray-100 font-sm hover:bg-blue-600 outline-none" v-on:click="createDeck()">Generate Deck</button>
+            </div>
+        </div>
+        <div class="flex flex-wrap p-4">
+            <div v-for="(card, index) in deck" class="p-4">
+                <div v-if="card.show">
+                    <img class="h-32 cursor-pointer" :src="'img/' + card.card + card.suit + '.png'" @click="card.show = !card.show">
+                    <div class="text-gray-700">
+                        {{ card.card | faceCardsToNumbers }} {{ workout[card.suit] }}
+                    </div>
+                </div>
+                <div v-if="!card.show">
+                    <img class="h-32 cursor-pointer" :src="'img/gray_back.png'" @click="card.show = !card.show">
+                    <div class="h-6"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script>
+        new Vue({
+            el: '#root',
+            data:{
+                deck: [],
+                mode: 'easy',
+                workout: {
+                    'S': 'Pushups',
+                    'H': 'Squats',
+                    'C': 'Burpees',
+                    'D': 'Sit Ups'
+                }
+            },
+            created() {
+                
+            },
+            methods: {
+                createDeck() {
+                    if (this.mode == 'easy') {
+                        var suits = ['S', 'H', 'C', 'D']
+                        var cards = [2,3,4,5,6,7,8]
+                    }
+                    
+                    if (this.mode == 'medium') {
+                        var suits = ['S', 'H', 'C', 'D']
+                        var cards = [2,3,4,5,6,7,8,9,10]
+                    }
+
+                    if (this.mode == 'hard') {
+                        var suits = ['S', 'H', 'C', 'D']
+                        var cards = [2,3,4,5,6,7,8,9,10,'J','Q']
+                    }
+
+                    if (this.mode == 'insane') {
+                        var suits = ['S', 'H', 'C', 'D']
+                        var cards = [2,3,4,5,6,7,8,9,10,'J','Q','K','A']
+                    }
+
+                    this.deck = []
+
+                    suits.forEach(suit => {
+                        cards.forEach(card => {
+                            this.deck.push({
+                                card: card,
+                                suit: suit,
+                                show: false
+                            })
+                        });
+                    });
+
+                    this.shuffle(this.deck)
+                },
+                shuffle(array) {
+                    for (let i = array.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [array[i], array[j]] = [array[j], array[i]];
+                    }
+                }
+            },
+            filters: {
+                faceCardsToNumbers: function (value) {
+                    if (!(typeof value === 'number')) {
+                        return '10'
+                    } else {
+                        return value
+                    }
+                }
+            }
+        })
+    </script>
+</body>
+</html>
